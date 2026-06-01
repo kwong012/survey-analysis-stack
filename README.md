@@ -61,8 +61,8 @@ pip install scipy statsmodels scikit-learn
 ### 5. proj-layout — 目录规范
 `data/raw/`（原始只读）+ `data/processed/`（清洗后）+ `scripts/` + `output/`（gitignore）+ `docs/`（变量说明）+ `archive/`（旧版归档）。含 .gitignore 和 README 模板。
 
-### 6. py-format — f-string 速查
-`:.1f` vs `:.1%` 的区别、百分比输入必须是小数（0.472）、None 值会炸 format、百分点差用 `:.1f` 不用 `:.1%`、报告常用句子模板。
+### 6. py-format — f-string 格式化速查
+写数据驱动报告常用到的 Python 格式化技巧。覆盖百分比、浮点、日期、对齐等场景，附带易错点（如 `:.1f` vs `:.1%` 的区别、None 值处理）和报告常用句子模板。
 
 ### 7. survey-pipeline — 整合全流程
 前 7 个技能的串联版。Part 0 目录 → Part 1 清洗 → Part 2 统计+图表 → Part 3 报告（含 A/C 动态分析）→ Part 4 格式化 → Part 5 一键 main.py。
