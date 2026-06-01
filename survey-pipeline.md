@@ -213,9 +213,10 @@ def handle_open_ended(data, key):
             '响应文本': responded}
 
 def normalize_multi_select(data, col_key):
+    """检测多选格式：0/1 多列 or 逗号分隔单列 → 统一为 0/1 列"""
     N = data['N']; vals = [str(data[col_key][i] or '') for i in range(N)]
     sample = [v for v in vals if v and v not in ('0','1','None','')]
-    if sample and any(',' in v for v in sample):
+    if sample and any(',' in v for v in sample):  # 逗号分隔 → 腾讯问卷格式，需拆分
         all_opts = set()
         for v in sample: all_opts.update(v.split(','))
         for opt in sorted(all_opts):
@@ -300,23 +301,28 @@ def pearson_r(x, y):
     return cov/(sx*sy) if sx and sy else 0
 
 def ttest_ind(group_a, group_b):
+    """Welch t 检验（不假设方差齐性）— 返回 (t 值, p 值近似)"""
     ma, mb = mean(group_a), mean(group_b); na, nb = len(group_a), len(group_b)
     if na<2 or nb<2: return None, '样本量不足'
     va, vb = stdev(group_a)**2, stdev(group_b)**2
-    se = ((va/na)+(vb/nb))**0.5
-    if se==0: return None, '标准误为0'
+    se = ((va/na)+(vb/nb))**0.5  # 标准误
+    if se==0: return None, '标准误为0（两组方差均为0，数据可能有误）'
     t = (ma-mb)/se
+    # Welch-Satterthwaite 自由度近似
     df_num = ((va/na)+(vb/nb))**2
     df_den = ((va/na)**2/(na-1))+((vb/nb)**2/(nb-1))
     df = df_num/df_den if df_den else 1
+    # df ≥ 60 时 t 分布趋近正态，|t|>1.96 ↔ p<0.05
     if df>=60: p = '<0.05' if abs(t)>1.96 else '>=0.05'
     else: p = f'需查t表(df={df:.0f})'
     return (t, p)
 
 def cronbach_alpha(items):
+    """Cronbach α 信度系数 — k 个等长 Likert 列
+       ≥0.9 优秀, ≥0.8 良好, ≥0.7 可接受, <0.7 需修订"""
     k = len(items); n = len(items[0])
-    vt = stdev([sum(items[j][i] for j in range(k)) for i in range(n)])**2
-    vi = sum(stdev(col)**2 for col in items)
+    vt = stdev([sum(items[j][i] for j in range(k)) for i in range(n)])**2  # 总分方差
+    vi = sum(stdev(col)**2 for col in items)  # 各项方差之和
     return (k/(k-1))*(1-vi/vt) if vt else 0
 ```
 

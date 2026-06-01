@@ -116,11 +116,11 @@ def ttest_ind(group_a, group_b):
     if na < 2 or nb < 2:
         return None, '样本量不足'
     va,vb = stdev(group_a)**2,stdev(group_b)**2
-    se = ((va/na)+(vb/nb))**0.5
+    se = ((va/na)+(vb/nb))**0.5  # 标准误
     if se == 0:
-        return None, '标准误为 0（数据异常）'
+        return None, '标准误为 0（两组方差均为 0，数据异常）'
     t = (ma-mb)/se
-    # df 近似（Welch-Satterthwaite）
+    # Welch-Satterthwaite 自由度近似（不假设方差齐性）
     df_num = ((va/na)+(vb/nb))**2
     df_den = ((va/na)**2/(na-1)) + ((vb/nb)**2/(nb-1))
     df = df_num/df_den if df_den else 1

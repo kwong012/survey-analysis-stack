@@ -118,6 +118,7 @@ SKIP_LOGIC = {
 }
 
 def handle_missing(data, strategy='mode'):
+    """缺失处理：>30%删行，≤30%众数填补；跳题缺失不参与计算"""
     N = data['N']
     to_drop = set()
     for key in data:
@@ -127,7 +128,7 @@ def handle_missing(data, strategy='mode'):
         none_idx = [i for i in range(N) if vals[i] is None or vals[i] == '']
         if not none_idx:
             continue
-        # 跳题缺失
+        # 跳题缺失：依赖列未触发 → 合法空值，跳过
         if key in SKIP_LOGIC:
             rule = SKIP_LOGIC[key]
             dep_key = rule['dep']
@@ -189,11 +190,11 @@ def classify_fill_column(data, key):
     total = pure_num + has_num_in_text + pure_text
     if total == 0:
         return 'empty', {}
-    if pure_num / total >= 0.90:
+    if pure_num / total >= 0.90:  # 90%+ 可直接转数字 → 数值列
         return 'numeric', {}
-    if (pure_num + has_num_in_text) / total >= 0.50:
+    if (pure_num + has_num_in_text) / total >= 0.50:  # ≥50% 含数字 → 混合提取
         return 'mixed', {'extracted': has_num_in_text, 'total': total}
-    return 'text', {}
+    return 'text', {}  # 文本占优势 → 词频统计
 
 def clean_fill_by_type(data, key):
     """根据分类结果执行对应清洗"""

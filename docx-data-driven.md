@@ -92,7 +92,9 @@ def compute_awareness_stats(d):
         clean = [int(x) for x in d[key] if x is not None]
         s[f'{key}_mean'] = mean(clean) if clean else 0
         s[f'{key}_high'] = sum(1 for x in clean if x >= 4) / N if clean else 0
-    # 城乡分组：直接在过滤 None 的同时按户籍条件取值，不依赖原始行号
+    # 城乡分组：过滤 None 和户籍条件同时进行，避免 clean[i] 行号错位
+    # ❌ 错误：先滤 None 生成 clean，再用原始行号 clean[original_i] → 偏移
+    # ✅ 正确：过滤时直接按条件取值
     for key in ['aware_gba','aware_bqw','aware_incub','aware_policy']:
         urban = [int(d[key][i]) for i in range(N) if d['hukou'][i]=='城镇' and d[key][i] is not None]
         rural = [int(d[key][i]) for i in range(N) if d['hukou'][i]=='农村' and d[key][i] is not None]
