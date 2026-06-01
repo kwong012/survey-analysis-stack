@@ -4,6 +4,8 @@ description: 问卷到报告全流程 — 数据清洗→统计分析→Excel图
 ---
 # 问卷调研全流程自动化
 
+> 【技能索引】data-clean · docx-data-driven · docx-font · excel-stats · proj-layout · py-format · survey-pipeline · xlsx-charts
+
 ## 流程
 
 ```

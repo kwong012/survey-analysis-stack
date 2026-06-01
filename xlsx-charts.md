@@ -1,5 +1,7 @@
 # xlsxwriter 图表可靠排版
 
+> 【技能索引】data-clean · docx-data-driven · docx-font · excel-stats · proj-layout · py-format · survey-pipeline · xlsx-charts
+
 ## 原则
 xlsxwriter 图表是浮动对象，多图放同一 Sheet 必然互相覆盖。
 **唯一稳的方案：一图一 Sheet，数据表在上、图表在下，垂直堆叠。**
